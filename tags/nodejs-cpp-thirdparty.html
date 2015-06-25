@@ -3,27 +3,30 @@
 <head>
   <meta charset="utf-8">
   
-  <title>node c++ 调用第三方库之TinyXPath | Vincent&#39;s blog</title>
+  <title>Tag: test | Vincent&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="本程序使用c++的第三方库TinyXPath进行实验，以探究c++调用第三方库的方法，TinyXPath官网可以点击这里查看。
 
 简述本程序主要参照nodejs官方文档和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击这里获取。
-编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。">
-<meta property="og:type" content="article">
+编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。
+完整源码解析main.cxx程序主入口文件，">
+<meta property="og:type" content="website">
 <meta property="og:title" content="node c++ 调用第三方库之TinyXPath">
-<meta property="og:url" content="http://vincent-zheng.github.io/2015/06/26/nodejs-cpp-thirdparty/index.html">
+<meta property="og:url" content="http://vincent-zheng.github.io/tags/nodejs-cpp-thirdparty.html">
 <meta property="og:site_name" content="Vincent's blog">
 <meta property="og:description" content="本程序使用c++的第三方库TinyXPath进行实验，以探究c++调用第三方库的方法，TinyXPath官网可以点击这里查看。
 
 简述本程序主要参照nodejs官方文档和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击这里获取。
-编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。">
-<meta property="og:updated_time" content="2015-06-25T17:36:11.690Z">
+编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。
+完整源码解析main.cxx程序主入口文件，">
+<meta property="og:updated_time" content="2015-06-25T17:24:27.086Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="node c++ 调用第三方库之TinyXPath">
 <meta name="twitter:description" content="本程序使用c++的第三方库TinyXPath进行实验，以探究c++调用第三方库的方法，TinyXPath官网可以点击这里查看。
 
 简述本程序主要参照nodejs官方文档和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击这里获取。
-编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。">
+编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。
+完整源码解析main.cxx程序主入口文件，">
   
   
     <link rel="icon" href="/favicon.png">
@@ -125,7 +128,7 @@
   </div>
 </aside>
       
-      <section id="main"><article id="post-nodejs-cpp-thirdparty" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -141,16 +144,11 @@
         <div class="article-meta">
           <div class="article-date">
   <i class="fa fa-calendar"></i>
-  <a href="/2015/06/26/nodejs-cpp-thirdparty/">
-    <time datetime="2015-06-25T17:36:11.690Z" itemprop="datePublished">2015-06-26</time>
+  <a href="/tags/nodejs-cpp-thirdparty.html">
+    <time datetime="2015-06-25T17:24:27.086Z" itemprop="datePublished">2015-06-26</time>
   </a>
 </div>
           
-  <div class="article-category">
-  	<i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
         </div>
       </header>
     
@@ -161,7 +159,6 @@
 </blockquote>
 <h2 id="简述">简述</h2><p>本程序主要参照<a href="https://nodejs.org/documentation/" target="_blank" rel="external">nodejs官方文档</a>和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击<a href="https://github.com/vincent-zheng/xpath4js" target="_blank" rel="external">这里</a>获取。</p>
 <h2 id="编译环境">编译环境</h2><p>本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。</p>
-<a id="more"></a>
 <h2 id="完整源码解析">完整源码解析</h2><h3 id="main-cxx">main.cxx</h3><p>程序主入口文件， 用以初始化类，本程序使用nodejs里面的WrapObject的方式来实现用c++代码构建js对象。下面只是调用XPath这个类里面的Init函数初始化对象，所以没什么好说的了 ~~<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// main.cxx&#10;#include &#34;xpath4js.h&#34;&#10;using namespace v8;&#10;using namespace std;&#10;&#10;void init(Handle&#60;Object&#62; exports) &#123;&#10;&#9;XPath::Init(exports);&#10;&#125;&#10;&#10;NODE_MODULE(xpath4js, init)</span><br></pre></td></tr></table></figure></p>
 <h3 id="xpath4js-h">xpath4js.h</h3><p>XPath对象头文件，定义的Init函数用以初始化对象。调用TinyXPath这个第三方库只需要包含<code>xpath_static.h</code>这个头文件即可，TinyXPath官方文档上面是说明TinyXPath这个库是先通过编译成静态库然后调用的，而我这里为了方便同时支持windows和linux平台，所以将这个编译的方式改成了直接编译源文件，在后面的binding.gyp文件中会有说明。需要另外说明的是对象中需要包含在exports出去的js对象中的话需要使用静态函数，当然，需要调用到的变量不需要这样做，不过记得要在构造函数中构造好。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#ifndef XPATH4JS&#10;#define XPATH4JS&#10;&#10;#include &#34;../lib/tinyxpath_1_3_1/xpath_static.h&#34;&#10;#include &#60;node.h&#62;&#10;#include &#60;node_object_wrap.h&#62;&#10;#include &#60;iostream&#62;&#10;&#10;class XPath : public node::ObjectWrap &#123;&#10;public:&#10;&#9;static void Init(v8::Handle&#60;v8::Object&#62; exports);&#10;private:&#10;&#9;explicit XPath(const char * xml);&#10;&#9;~XPath();&#10;&#10;&#9;static void New(const v8::FunctionCallbackInfo&#60;v8::Value&#62; &#38; args);&#10;&#9;static void parse(const v8::FunctionCallbackInfo&#60;v8::Value&#62; &#38; args);&#10;&#9;static void get(const v8::FunctionCallbackInfo&#60;v8::Value&#62; &#38; args);&#10;&#9;static v8::Persistent&#60;v8::Function&#62; constructor;&#10;&#10;&#9;char * _xml;&#10;&#9;TiXmlDocument * doc;&#10;&#125;;&#10;&#10;#endif</span><br></pre></td></tr></table></figure>
@@ -172,25 +169,13 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://vincent-zheng.github.io/2015/06/26/nodejs-cpp-thirdparty/" data-id="cibcg0ix30001ncakuavluqtz" class="article-share-link">分享到</a>
+      <a data-url="http://vincent-zheng.github.io/tags/nodejs-cpp-thirdparty.html" data-id="cibcgwdgt0003asakwp5xjdz3" class="article-share-link">分享到</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
-
     </footer>
   </div>
   
     
-<nav id="article-nav">
-  
-  
-    <a href="/2015/06/26/nodejs-addon/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">nodejs addon</div>
-    </a>
-  
-</nav>
-
   
 </article>
 
