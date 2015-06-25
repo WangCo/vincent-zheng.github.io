@@ -3,17 +3,30 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Vincent&#39;s blog</title>
+  <title>node c++ 调用第三方库之TinyXPath | Vincent&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Vincent's blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="本程序使用c++的第三方库TinyXPath进行实验，以探究c++调用第三方库的方法，TinyXPath官网可以点击这里查看。
+
+简述本程序主要参照nodejs官方文档和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击这里获取。
+编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。
+完整源码解析main.cxx程序主入口文件，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node c++ 调用第三方库之TinyXPath">
+<meta property="og:url" content="http://yoursite.com/2015/06/26/nodejs-cpp-thirdparty/index.html">
 <meta property="og:site_name" content="Vincent's blog">
-<meta property="og:description">
+<meta property="og:description" content="本程序使用c++的第三方库TinyXPath进行实验，以探究c++调用第三方库的方法，TinyXPath官网可以点击这里查看。
+
+简述本程序主要参照nodejs官方文档和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击这里获取。
+编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。
+完整源码解析main.cxx程序主入口文件，">
+<meta property="og:updated_time" content="2015-06-25T16:11:34.434Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vincent's blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="node c++ 调用第三方库之TinyXPath">
+<meta name="twitter:description" content="本程序使用c++的第三方库TinyXPath进行实验，以探究c++调用第三方库的方法，TinyXPath官网可以点击这里查看。
+
+简述本程序主要参照nodejs官方文档和部分v8引擎源码（这里我也正在看，所以可能会有比较多的误差）。程序完整源码可以点击这里获取。
+编译环境本程序在VS2013和gcc4.9.2下编译通过，nodejs版本为0.12.4。
+完整源码解析main.cxx程序主入口文件，">
   
   
   <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
@@ -52,8 +65,7 @@
 </header>
     <div class="outer">
       
-      <section id="main">
-      <article id="post-nodejs-cpp-thirdparty" class="article article-type-post" itemscope itemprop="blogPost">
+      <section id="main"><article id="post-nodejs-cpp-thirdparty" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -61,8 +73,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/06/26/nodejs-cpp-thirdparty/">node c++ 调用第三方库之TinyXPath</a>
+    <h1 class="article-title" itemprop="name">
+      node c++ 调用第三方库之TinyXPath
     </h1>
   
 
@@ -100,92 +112,21 @@
     </footer>
   </div>
   
-</article>
-
-
     
-      <article id="post-nodejs-addon" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-    
-      <header class="article-header">
-        
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/06/26/nodejs-addon/">nodejs addon</a>
-    </h1>
   
+    <a href="/2015/06/26/nodejs-addon/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs addon</div>
+    </a>
+  
+</nav>
 
-        <div class="article-meta">
-          <div class="article-date">
-  <i class="fa fa-calendar"></i>
-  <a href="/2015/06/26/nodejs-addon/">
-    <time datetime="2015-06-25T16:10:34.132Z" itemprop="datePublished">2015-06-26</time>
-  </a>
-</div>
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言">前言</h2><p>Addons是一个动态链接对象，可以为C/C++库提供一个链接的方法，为node.js提供更高的性能和多线程的能力。不过同时这个东西对于入门新手也是蛮复杂的~~ ，再加上中文文档偏少所以对于我这种英语学渣来说挺坑爹的~~ 。首先，它主要依赖了以下几个库：</p>
-<ul>
-<li>V8 JavaScript，这个是V8 引擎的库，相应的文档可以通过google chrome V8 可以找到~~</li>
-<li>libuv， 这个感觉是node.js的精髓，它是node.js的跨平台抽象层，用于抽象Windows的IOCP和Unix的libev，简单来讲就是异步处理机制的库。</li>
-<li>其他一些dependencies，可以在deps目录下找到，<ul>
-<li>windows下是  C:\Users\UserName.node-gyp\0.12.0\deps</li>
-<li>linux下是 /usr/include/nodejs/deps</li>
-</ul>
-</li>
-</ul>
-<h3 id="Hello_world">Hello world</h3><blockquote>
-<p> 这部分来自官档，可以点击<a href="https://nodejs.org/api/addons.html" target="_blank" rel="external">这里</a>查看</p>
-</blockquote>
-<p>与c++代码等义的JS代码<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports.hello = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="string">'world'</span>; &#125;;</span><br></pre></td></tr></table></figure></p>
-<p>首先要在目录下创建一个 hello.cc文件，这个就是c++的源程序<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hello.cc</span></span><br><span class="line">#include &lt;node.h&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> v8;</span><br><span class="line"></span><br><span class="line">void <span class="function"><span class="keyword">Method</span><span class="params">(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt;&amp; args)</span> <span class="comment">&#123;</span><br><span class="line">  Isolate* isolate = Isolate::GetCurrent();</span><br><span class="line">  HandleScope scope(isolate);</span><br><span class="line">  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "world"));</span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="title">void</span> <span class="title">init</span><span class="params">(Handle&lt;Object&gt; exports)</span> <span class="comment">&#123;</span><br><span class="line">  NODE_SET_METHOD(exports, "hello", Method);</span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="title">NODE_MODULE</span><span class="params">(addon, init)</span></span></span><br></pre></td></tr></table></figure></p>
-<p>解释一下，这里的init函数是用于初始化输出项，相当于JS代码中的exports，exports是一个载入的文件作用于中的全局变量，而NODE_MODULE这里不是一个函数~~ ，这是一个宏定义，详情可以看node.h，<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hexcolor">#def</span>ine <span class="function"><span class="title">NODE_MODULE</span><span class="params">(modname, regfunc)</span></span>                                 \</span><br><span class="line">  <span class="function"><span class="title">NODE_MODULE_X</span><span class="params">(modname, regfunc, NULL, <span class="number">0</span>)</span></span></span><br></pre></td></tr></table></figure></p>
-<p>最后，再写上一个binding.gyp就可以了，binding.gyp大概相当于一个编译脚本的配置文件，用于生成相应平台下的编译脚本的，在windows下创建一个VS工程，而在Linux下面则会生成makefile等东西，编译后的生成文件会放于build/Release/目录下，后缀名为.node,不同平台下皆一样，这里有必要说明一下，后缀名虽然相同，但是不可以由于编译平台不一样所以不能直接复制到不同操作系统下使用~~ 。当然有时候也会遇到坑，导致编译成功了但是没有在build/Release目录下找到相应的文件，例如libxmljs这个库的某些版本~~ 。<br>binding.gyp：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  "<span class="attribute">targets</span>": <span class="value">[</span><br><span class="line">    &#123;</span><br><span class="line">      "<span class="attribute">target_name</span>": <span class="value"><span class="string">"addon"</span></span>,</span><br><span class="line">      "<span class="attribute">sources</span>": <span class="value">[ <span class="string">"hello.cc"</span> ]</span><br><span class="line">    </span>&#125;</span><br><span class="line">  ]</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure></p>
-<p>编译命令：</p>
-<blockquote>
-<p>PS： 这里有时也会遇到坑，因为我更新了Ubuntu里面的node的版本，而编译依赖的源码没有被更新到，所以导致编译的时候会出错~~ ，<br>修复方法：<br>sudo apt-get remove gyp<br>sudo npm remove -g node-gyp<br>sudo apt-get install gyp<br>sudo npm install -g node-gyp<br>// 简单来讲就是重装这个东西 ~~ </p>
-</blockquote>
-<figure class="highlight puppet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 进入工程目录下</span><br><span class="line"><span class="keyword">node</span>-gyp configure</span><br><span class="line"><span class="keyword">node</span>-gyp build</span><br></pre></td></tr></table></figure>
-<p>最后在JS代码中调用这个addon：</p>
-<blockquote>
-<p>PS: 如果不是./让他选择本项目中寻找会报出无法找到模块的错误。 </p>
-</blockquote>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hello.js</span></span><br><span class="line"><span class="keyword">var</span> addon = <span class="built_in">require</span>(<span class="string">'./build/Release/addon'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(addon.hello()); <span class="comment">// 'world'</span></span><br></pre></td></tr></table></figure>
-<p>以上主要参考于官方文档，下面加点如何使用c++11的方法 ~~ ， 个人比较喜欢c++11，感觉到了这个版本c++写起来才比较有感 ~~</p>
-<h3 id="node-js_addon_c++11_thread使用">node.js addon c++11 thread使用</h3><blockquote>
-<p>本源码只在VS2013和Ubuntu下的gcc4.9.2编译测试过，其他平台没有测试过 ~~ ， 也不知道其他平台对c++11支持情况如何。</p>
-</blockquote>
-<p>C++ 源码不是主要，主要是看binding.gyp如何编写，所以c++部分代码直接贴上。</p>
-<p>C++ 源码： </p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">// hello.cxx</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">include</span> &lt;node.h&gt;</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">include</span> &lt;iostream&gt;</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">include</span> &lt;thread&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="preprocessor">#ifdef WIN</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">include</span> &lt;windows.h&gt;</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">endif</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="preprocessor">#ifdef UNIX</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">include</span> &lt;unistd.h&gt;</span></span><br><span class="line">    <span class="preprocessor">#<span class="keyword">endif</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line">    <span class="keyword">using</span> <span class="keyword">namespace</span> v8;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt; &amp; args, Isolate * isolate, <span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="preprocessor">#ifdef WIN</span></span><br><span class="line">    	Sleep(<span class="number">3000</span>);</span><br><span class="line">    <span class="preprocessor">#<span class="keyword">endif</span></span></span><br><span class="line">    <span class="preprocessor">#ifdef UNIX</span></span><br><span class="line">    	sleep(<span class="number">3</span>);</span><br><span class="line">    <span class="preprocessor">#<span class="keyword">endif</span></span></span><br><span class="line">    </span><br><span class="line">    	<span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">    		args.GetReturnValue().Set(String::NewFromUtf8(isolate, <span class="string">"hello vincent!!!"</span>));</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="built_in">cout</span> &lt;&lt; <span class="string">"thread"</span> &lt;&lt; i &lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">hello</span><span class="params">(<span class="keyword">const</span> FunctionCallbackInfo&lt;Value&gt; &amp; args)</span> </span>&#123;</span><br><span class="line">    	Isolate * isolate = Isolate::GetCurrent();</span><br><span class="line">    	<span class="function">HandleScope <span class="title">scope</span><span class="params">(isolate)</span></span>;</span><br><span class="line">    	thread t[<span class="number">2</span>];</span><br><span class="line">    	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    	t[<span class="number">0</span>] = thread(func, args, isolate, i ++);</span><br><span class="line">    	t[<span class="number">1</span>] = thread(func, args, isolate, i);</span><br><span class="line">    	t[<span class="number">0</span>].join();</span><br><span class="line">    	t[<span class="number">1</span>].join();</span><br><span class="line">    	<span class="built_in">cout</span>&lt;&lt;<span class="string">"end"</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">extern</span> <span class="string">"C"</span> <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(Handle&lt;Object&gt; exports)</span> </span>&#123;</span><br><span class="line">    	NODE_SET_METHOD(exports, <span class="string">"hello"</span>, hello);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    NODE_MODULE(addon, init)</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">binding.gyp:</span><br><span class="line">&gt; 关键在于要定义那个cflags，这个地方没有在官档中找到，我是从addon.gypi里面摸索出来的。</span><br></pre></td></tr></table></figure>
-<p>{<br>    ‘targets’: [<br>        {<br>            ‘include_dirs’: [<br>              ‘&lt;(node_root_dir)/src’,<br>              ‘&lt;(node_root_dir)/deps/uv/include’,<br>              ‘&lt;(node_root_dir)/deps/v8/include’<br>            ],<br>            ‘target_name’: ‘addon’,<br>            “sources”: [<br>                ‘hello.cxx’<br>            ],<br>            ‘conditions’: [<br>                [‘OS==”win”‘, {<br>                        ‘defines’: [<br>                            ‘WIN’<br>                        ]<br>                    }<br>                ],<br>                [‘OS==”linux”‘, {<br>                        ‘cflags’: [<br>                            ‘—std=c++11’,<br>                            ‘-pthread’<br>                        ],<br>                        ‘defines’: [<br>                            ‘UNIX’<br>                        ]<br>                    }</p>
-<pre><code>            ]    
-        ]
-    }
-]
-</code></pre><p>}</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">最后就是编译：</span><br></pre></td></tr></table></figure>
-<p>node-gyp configure<br>node-gyp build<br>```</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/06/26/nodejs-addon/" data-id="cibce4ebi0000gsakjit85lps" class="article-share-link">分享到</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
 
-
-    </section>
+</section>
       
     </div>
     <footer id="footer">
